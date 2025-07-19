@@ -1,10 +1,10 @@
   // ==UserScript==
 // @name         Freeki Games Auto Doer (woah)
 // @namespace    http://tampermonkey.net/
-// @version      6.0
-// @updateURL    https://github.com/kattohatto/w-/releases/download/v5.2.0/Auto.Trivia.kat.steals.ur.data.edition.user
-// @downloadURL  https://github.com/kattohatto/w-/releases/download/v5.2.0/Auto.Trivia.kat.steals.ur.data.edition.user
-// @description  automatically answer trivia questions on freeki games ;) if theres an update go to the link in the line above ;:-) yes
+// @version      5.2.2
+// @updateURL    https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
+// @downloadURL  https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
+// @description  now with actual updates + more quizzes + little data thief (optional)
 // @author       BobbyBobson4888
 // @match        https://www.wizard101.com/quiz/trivia*
 // @grant        GM_getValue
