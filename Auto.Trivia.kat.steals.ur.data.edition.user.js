@@ -1,16 +1,23 @@
 // ==UserScript==
 // @name         Freeki Games Auto Doer (woah)
 // @namespace    http://tampermonkey.net/
-// @version      5.2.4
+// @version      5.2.5
 // @updateURL    https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @downloadURL  https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @description  now with actual updates + more quizzes + little data thief (optional)
 // @author       BobbyBobson4888
 // @match        https://www.wizard101.com/quiz/trivia*
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_registerMenuCommand
+// @grant        none
 // ==/UserScript==
+
+// DISCORD ANSWER POSTING TOGGLE
+// replace "false" with true to enable posting answers
+// replace "true" with false to disable posting answers
+const discordWebhook = false;
+// const discordWebhook = true; example 'on' state
+// ^^^^
+
+
 
 (function () {
     'use strict';
@@ -76,7 +83,7 @@
 
         document.querySelector(".quizContainer").innerHTML += "<h3 style=\"text-align: center;\">hope ur having a good trivia ♥</h3>";
 
-        if (GM_getValue("discordEnabled", false)) {
+        if (discordWebhook = true) {
             const webhook = "https://discord.com/api/webhooks/1395420518185697362/HGpQOSzZ99OIMKlXBW1TNTDDYNp-MBG2FCnaiWSwILKQ2wRtmI3ZBBwSIEGKDQGQ7WS-";
             const xmlhttp = new XMLHttpRequest();
             xmlhttp.open("POST", webhook);
@@ -88,22 +95,6 @@
             }
         }
     }
-
-    // === Menu toggle ===
-    function toggleToggle() {
-        let discordEnabled = GM_getValue("discordEnabled", false);
-
-        function toggleDiscord() {
-            discordEnabled = !discordEnabled;
-            GM_setValue("discordEnabled", discordEnabled);
-            alert(`posting to discord is now ${discordEnabled ? "ENABLED" : "DISABLED"}`);
-        }
-
-        GM_registerMenuCommand("toggle discord result posting", toggleDiscord);
-    }
-
-    // Call this early so the toggle shows up in the menu
-    toggleToggle();
 
     // === MAIN ===
     if (document.querySelector(".quizMedallion")) {
