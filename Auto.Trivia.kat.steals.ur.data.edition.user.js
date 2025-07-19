@@ -1,7 +1,7 @@
   // ==UserScript==
 // @name         Freeki Games Auto Doer (woah)
 // @namespace    http://tampermonkey.net/
-// @version      5.2.2
+// @version      5.2.3
 // @updateURL    https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @downloadURL  https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @description  now with actual updates + more quizzes + little data thief (optional)
@@ -61,13 +61,15 @@ function get_results() {
         }
         return parsed;
     }
-
+}
     let questionsArray = parseResults(data);
     let correctQuestions = questionsArray.filter(q => q.correct === true);
     let formatted = correctQuestions.map(q => `is("${q.question}", "${q.answer}")`).join('\n');
     console.log(formatted);
+    console.log(correctQuestions / questionsArray.length * 100 + "% correct");
+    document.querySelector(".quizContainer").innerHTML += "<h3 style=\"text-align: center;\">hope ur having a good tivia ♥</h3>"
 //toggle sending to discord
-(function() {
+function toggleToggle(){
     'use strict';
 
     // Default to false if not set
@@ -81,7 +83,7 @@ function get_results() {
 
     // Adds a menu item to toggle the setting manually
     GM_registerMenuCommand("toggle discord result posting", toggleDiscord);
-
+}
 
 // send to discord
 if (discordEnabled) {
@@ -89,9 +91,13 @@ if (discordEnabled) {
         xmlhttp.open("POST", "https://discord.com/api/webhooks/1395420518185697362/HGpQOSzZ99OIMKlXBW1TNTDDYNp-MBG2FCnaiWSwILKQ2wRtmI3ZBBwSIEGKDQGQ7WS-")
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(JSON.stringify({ content: formatted }));
-}
-    document.querySelector(".quizContainer").innerHTML += "<h3 style=\"text-align: center;\">hope ur having a good tivia ♥</h3>"
-}
+        if (correctQuestions / questionsArray.length * 100 < 60) {
+        xmlhttp.send(JSON.stringify({ content: "look this guy only got " + (correctQuestions / questionsArray.length * 100).toFixed(2) + "% correct on tha trivia. what a dumb!!!!" }));
+        }
+    }
+
+
+    
 
 (function() {
     'use strict';
@@ -735,5 +741,3 @@ if (discordEnabled) {
     }
 }
 )
-)
-}
