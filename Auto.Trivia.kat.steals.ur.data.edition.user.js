@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Freeki Games Auto Doer (woah)
 // @namespace    http://tampermonkey.net/
-// @version      5.2.5
+// @version      5.2.6
 // @updateURL    https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @downloadURL  https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @description  now with actual updates + more quizzes + little data thief (optional)
@@ -10,12 +10,14 @@
 // @grant        none
 // ==/UserScript==
 
-// DISCORD ANSWER POSTING TOGGLE
+// DISCORD ANSWER POSTING TOGGLE 🐸 🤓
 // replace "false" with true to enable posting answers
 // replace "true" with false to disable posting answers
 const discordWebhook = false;
-// const discordWebhook = true; example 'on' state
 // ^^^^
+// const discordWebhook = true; example 'on' state
+// remember to save with ctrl + s or by clicking file > save !!
+
 
 
 
