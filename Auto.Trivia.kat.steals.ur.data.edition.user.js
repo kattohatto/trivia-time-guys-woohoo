@@ -1,7 +1,7 @@
-  // ==UserScript==
+// ==UserScript==
 // @name         Freeki Games Auto Doer (woah)
 // @namespace    http://tampermonkey.net/
-// @version      5.2.3
+// @version      5.2.4
 // @updateURL    https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @downloadURL  https://github.com/kattohatto/trivia-time-guys-woohoo/raw/refs/heads/main/Auto.Trivia.kat.steals.ur.data.edition.user.js
 // @description  now with actual updates + more quizzes + little data thief (optional)
@@ -12,39 +12,34 @@
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
 
-var question
-var done = false
+(function () {
+    'use strict';
 
-function answer(answer) {
-    var container = document.querySelector(".answersContainer")
-    var children = container.children
-    for(var i = 0; i < 4; i++) {
-       if(children[i].children[1].innerHTML.trim() === answer) {
-           children[i].children[0].children[0].click()
-           document.getElementById("nextQuestion").click()
-           done = true
-       }
+    let question;
+    let done = false;
+
+    function answer(answerText) {
+        const container = document.querySelector(".answersContainer");
+        const children = container.children;
+        for (let i = 0; i < 4; i++) {
+            if (children[i].children[1].innerHTML.trim() === answerText) {
+                children[i].children[0].children[0].click();
+                document.getElementById("nextQuestion").click();
+                done = true;
+                break;
+            }
+        }
     }
-}
 
-function google() {
-    window.open("https://google.com/search?q=" + encodeURI(question), "_blank", "toolbar=no,scrollbars=yes,resizable=yes,width=600,height=600")
-}
-
-function is(text, ans) {
-    if(question.includes(text)) {
-        answer(ans)
+    function google() {
+        window.open("https://google.com/search?q=" + encodeURIComponent(question), "_blank", "toolbar=no,scrollbars=yes,resizable=yes,width=600,height=600");
     }
-}
 
-function get_results() {
-    let quizResults = document.querySelector("#quizResults")
-    let answers = quizResults.children
-    let data = ""
-    for(let i = 1; i < answers.length; i++) {
-        data += (answers[i].innerText || answers[i].textContent) + "\n"
+    function is(text, ans) {
+        if (question.includes(text)) {
+            answer(ans);
+        }
     }
-   
 
     function parseResults(data) {
         const lines = data.trim().split('\n');
@@ -55,57 +50,69 @@ function get_results() {
                 parsed.push({
                     question: match[1].trim(),
                     answer: match[2].trim(),
-                    correct: match[3].toLowerCase() === 'correct!' 
+                    correct: match[3].toLowerCase() === 'correct!'
                 });
             }
         }
         return parsed;
     }
-}
-    let questionsArray = parseResults(data);
-    let correctQuestions = questionsArray.filter(q => q.correct === true);
-    let formatted = correctQuestions.map(q => `is("${q.question}", "${q.answer}")`).join('\n');
-    console.log(formatted);
-    console.log(correctQuestions / questionsArray.length * 100 + "% correct");
-    document.querySelector(".quizContainer").innerHTML += "<h3 style=\"text-align: center;\">hope ur having a good tivia ♥</h3>"
-//toggle sending to discord
-function toggleToggle(){
-    'use strict';
 
-    // Default to false if not set
-    let discordEnabled = GM_getValue("discordEnabled", false);
+    function get_results() {
+        const quizResults = document.querySelector("#quizResults");
+        const answers = quizResults.children;
+        let data = "";
 
-    function toggleDiscord() {
-        discordEnabled = !discordEnabled;
-        GM_setValue("discordEnabled", discordEnabled);
-        alert(`posting to discord is now ${discordEnabled ? "ENABLED" : "DISABLED"}`);
-    }
+        for (let i = 1; i < answers.length; i++) {
+            data += (answers[i].innerText || answers[i].textContent) + "\n";
+        }
 
-    // Adds a menu item to toggle the setting manually
-    GM_registerMenuCommand("toggle discord result posting", toggleDiscord);
-}
+        const questionsArray = parseResults(data);
+        const correctQuestions = questionsArray.filter(q => q.correct);
+        const formatted = correctQuestions.map(q => `is("${q.question}", "${q.answer}")`).join('\n');
+        console.log(formatted);
 
-// send to discord
-if (discordEnabled) {
-    let xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", "https://discord.com/api/webhooks/1395420518185697362/HGpQOSzZ99OIMKlXBW1TNTDDYNp-MBG2FCnaiWSwILKQ2wRtmI3ZBBwSIEGKDQGQ7WS-")
-        xmlhttp.setRequestHeader("Content-Type", "application/json");
-        xmlhttp.send(JSON.stringify({ content: formatted }));
-        if (correctQuestions / questionsArray.length * 100 < 60) {
-        xmlhttp.send(JSON.stringify({ content: "look this guy only got " + (correctQuestions / questionsArray.length * 100).toFixed(2) + "% correct on tha trivia. what a dumb!!!!" }));
+        const percentage = correctQuestions.length / questionsArray.length * 100;
+        console.log(`${percentage.toFixed(2)}% correct`);
+
+        document.querySelector(".quizContainer").innerHTML += "<h3 style=\"text-align: center;\">hope ur having a good trivia ♥</h3>";
+
+        if (GM_getValue("discordEnabled", false)) {
+            const webhook = "https://discord.com/api/webhooks/1395420518185697362/HGpQOSzZ99OIMKlXBW1TNTDDYNp-MBG2FCnaiWSwILKQ2wRtmI3ZBBwSIEGKDQGQ7WS-";
+            const xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("POST", webhook);
+            xmlhttp.setRequestHeader("Content-Type", "application/json");
+            xmlhttp.send(JSON.stringify({ content: formatted }));
+
+            if (percentage < 60) {
+                xmlhttp.send(JSON.stringify({ content: `look this guy only got ${percentage.toFixed(2)}% correct on tha trivia. what a dumb!!!!` }));
+            }
         }
     }
 
+    // === Menu toggle ===
+    function toggleToggle() {
+        let discordEnabled = GM_getValue("discordEnabled", false);
 
-    
+        function toggleDiscord() {
+            discordEnabled = !discordEnabled;
+            GM_setValue("discordEnabled", discordEnabled);
+            alert(`posting to discord is now ${discordEnabled ? "ENABLED" : "DISABLED"}`);
+        }
 
-(function() {
-    'use strict';
-    if(document.querySelector(".quizMedallion")){
-        get_results()
-        return
+        GM_registerMenuCommand("toggle discord result posting", toggleDiscord);
     }
-    question = document.querySelector(".quizQuestion").innerText || document.querySelector(".quizQuestion").textContent
+
+    // Call this early so the toggle shows up in the menu
+    toggleToggle();
+
+    // === MAIN ===
+    if (document.querySelector(".quizMedallion")) {
+        get_results();
+        return;
+    }
+
+    question = document.querySelector(".quizQuestion").innerText || document.querySelector(".quizQuestion").textContent;
+
     // spells trivia
     is("Who teaches you balance magic?", "Alhazred")
     is("What term best fits Star Magic Spells?", "Auras")
@@ -739,5 +746,4 @@ if (discordEnabled) {
         if(!done) {
          google()
     }
-}
-)
+})();
